@@ -3,92 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz - Trouvez votre Race</title>
+    <title>Quiz de personnalité - Warhammer</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
             background-image: url('https://c4.wallpaperflare.com/wallpaper/714/353/236/total-war-warhammer-iii-warhammer-khorne-hd-wallpaper-preview.jpg');
             background-size: cover;
             color: white;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-        }
-
-        h1 {
-            margin-bottom: 20px;
             text-align: center;
         }
-
+        h1 {
+            margin-top: 20px;
+        }
         #quiz-container {
             background: rgba(0, 0, 0, 0.7);
             padding: 20px;
             border-radius: 10px;
-            width: 80%;
             max-width: 600px;
-            text-align: center;
-            position: relative; /* Added for positioning */
+            margin: 50px auto;
         }
-
         .choice {
-            background-color: #444;
-            border: none;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid white;
             color: white;
             padding: 10px;
             margin: 10px 0;
             border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: background 0.3s;
         }
-
-        .choice:hover {
-            background-color: #555;
+        .choice.selected {
+            background: rgba(255, 255, 255, 0.3);
         }
-
-        .selected {
-            background-color: rgba(255, 255, 255, 0.2);
+        .choice.grayed {
+            background: rgba(255, 255, 255, 0.1);
+            color: gray;
         }
-
-        .grayed {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-
-        #next-btn {
-            background-color: #28a745;
-            border: none;
-            color: white;
+        #next-btn, #retry-btn {
+            margin-top: 20px;
             padding: 10px 20px;
+            border: none;
             border-radius: 5px;
+            background: #ff5733;
+            color: white;
             cursor: pointer;
-            transition: background-color 0.3s;
-            margin-top: 15px;
+            font-size: 16px;
         }
-
-        #next-btn:hover {
-            background-color: #218838;
-        }
-
         #result-container {
             display: none;
-            margin-top: 20px;
         }
-
-        #retry-btn {
-            background-color: #007bff;
-            border: none;
-            color: white;
-            padding: 10px 20px;
-            border-radius: 5px;
-        }
-
-        #retry-btn:hover {
-            background-color: #0069d9;
-        }
-
         #confetti {
             position: fixed;
             top: 0;
@@ -96,202 +59,69 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
-            display: none;
+            z-index: 1000;
         }
-
         .confetti {
             position: absolute;
             width: 10px;
             height: 10px;
-            opacity: 0.7;
-            border-radius: 50%;
+            opacity: 0.9;
             pointer-events: none;
-            will-change: transform;
         }
-
-        footer {
-            position: absolute;
-            bottom: 0px; /* Moved footer up */
-            text-align: center;
-            width: 100%;
-            color: white;
+        #logo {
+            margin-bottom: 10px;
+            max-width: 200px;
         }
-
+        #credits {
+            margin: 10px 0;
+            font-size: 14px;
+        }
+        #links {
+            margin: 20px 0;
+        }
         a {
             color: white;
             text-decoration: none;
-            margin: 0 10px;
+            font-weight: bold;
         }
-
-        img.logo {
-            position: absolute;
-            top: -100px; /* Adjusted to move the logo higher */
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100px; /* Optional: Change the width as needed */
-        }
-
     </style>
 </head>
 <body>
+    <img id="logo" src="https://i.ibb.co/dmghmxG/logo-samos.png" alt="Logo Samos Le Sage">
+    <div id="credits">Quiz créé par Samos Le Sage</div>
+    <div id="links">
+        <a href="https://www.twitch.tv/samoslesage" target="_blank">Ma chaîne Twitch</a> |
+        <a href="https://link.space/@samoslesage" target="_blank">Mes réseaux sociaux</a>
+    </div>
     <div id="quiz-container">
-        <img class="logo" src="https://i.ibb.co/dmghmxG/logo-samos.png" alt="Logo Samos">
-        <h1>Trouvez votre Race dans Warhammer</h1>
+        <h1>Quiz de personnalité</h1>
         <div id="question-text"></div>
         <div>
-            <button class="choice" data-choice="A"></button>
-            <button class="choice" data-choice="B"></button>
-            <button class="choice" data-choice="C"></button>
-            <button class="choice" data-choice="D"></button>
+            <div class="choice" data-choice="A"></div>
+            <div class="choice" data-choice="B"></div>
+            <div class="choice" data-choice="C"></div>
+            <div class="choice" data-choice="D"></div>
         </div>
         <button id="next-btn" class="hidden">Suivant</button>
     </div>
-
     <div id="result-container">
-        <h2 id="result-text"></h2>
+        <h2>Résultat</h2>
+        <div id="result-text"></div>
+        <div id="thank-you-message">Merci d'avoir participé au quiz ! Votre opinion est précieuse pour nous.</div>
         <button id="retry-btn">Réessayer</button>
     </div>
-
     <div id="confetti"></div>
-
-    <footer>
-        <p>Créé par <strong>Samos Le Sage</strong></p>
-        <p>
-            <a href="https://www.twitch.tv/samoslesage" target="_blank">Twitch</a>
-            <a href="https://link.space/@samoslesage" target="_blank">Réseaux Sociaux</a>
-        </p>
-    </footer>
 
     <script>
         const questions = [
             {
-                question: "Quelle est votre vision de l'avenir ?",
-                choices: ["Un avenir prospère", "Un empire puissant", "Une coexistence harmonieuse", "Un monde chaotique"],
+                question: "Comment décririez-vous votre approche de la vie ?",
+                choices: ["Pragmatique", "Héroïque", "Éthique", "Chaotique"],
                 points: { A: "Empire", B: "Nains", C: "Hauts Elfes", D: "Chaos" }
             },
             {
-                question: "Quel est votre plus grand peur ?",
-                choices: ["L'échec", "La pauvreté", "La perte de mon peuple", "Le chaos"],
-                points: { A: "Empire", B: "Nains", C: "Hauts Elfes", D: "Chaos" }
-            },
-            {
-                question: "Quel type de héros admirez-vous le plus ?",
-                choices: ["Le stratège", "Le guerrier", "L'artiste", "Le sorcier"],
-                points: { A: "Empire", B: "Nains", C: "Hauts Elfes", D: "Chaos" }
-            },
-            {
-                question: "Quelle est votre façon préférée de vous divertir ?",
-                choices: ["Organiser des événements", "Faire la fête", "Réaliser des œuvres d'art", "Détruire des choses"],
-                points: { A: "Empire", B: "Nains", C: "Hauts Elfes", D: "Chaos" }
-            },
-            {
-                question: "Comment envisagez-vous votre héritage ?",
-                choices: ["Une dynastie forte", "Un trésor inestimable", "Une culture florissante", "Un chaos mémorable"],
-                points: { A: "Empire", B: "Nains", C: "Hauts Elfes", D: "Chaos" }
-            },
-            {
-                question: "Quel est votre plat préféré ?",
-                choices: ["Un banquet royal", "Un festin de viandes", "Des fruits de mer", "Une potion mystérieuse"],
-                points: { A: "Empire", B: "Nains", C: "Hauts Elfes", D: "Chaos" }
-            },
-            {
-                question: "Que feriez-vous avec un trésor ?",
-                choices: ["Construire un empire", "Acheter de l'influence", "Partager avec mon peuple", "Le détruire"],
-                points: { A: "Empire", B: "Nains", C: "Hauts Elfes", D: "Chaos" }
-            },
-            {
-                question: "Quelle est votre approche de la magie ?",
-                choices: ["Elle doit être utilisée avec prudence", "Elle est une arme puissante", "Elle est une forme d'art", "Elle doit être maîtrisée"],
-                points: { A: "Empire", B: "Nains", C: "Hauts Elfes", D: "Chaos" }
-            },
-            {
-                question: "Quel est votre type de vêtement préféré ?",
-                choices: ["Uniforme soigné", "Armure robuste", "Robe élégante", "Tuniques sombres"],
-                points: { A: "Empire", B: "Nains", C: "Hauts Elfes", D: "Chaos" }
-            },
-            {
-                question: "Que pensez-vous de l'innovation ?",
-                choices: ["Elle est nécessaire", "Elle doit être utilisée avec prudence", "Elle est une tradition", "Elle est une folie"],
-                points: { A: "Empire", B: "Nains", C: "Hauts Elfes", D: "Chaos" }
-            },
-            {
-                question: "Quel est votre rapport à la nature ?",
-                choices: ["Elle doit être respectée", "Elle est source de ressources", "Elle est belle", "Elle est à contrôler"],
-                points: { A: "Empire", B: "Nains", C: "Hauts Elfes", D: "Chaos" }
-            },
-            {
-                question: "Que feriez-vous en cas de danger ?",
-                choices: ["Évaluer la situation", "Agir avec force", "Chercher des alliés", "Se retirer"],
-                points: { A: "Empire", B: "Nains", C: "Hauts Elfes", D: "Chaos" }
-            },
-            {
-                question: "Quel est votre rapport à l'histoire ?",
-                choices: ["Elle est un guide", "Elle est une fable", "Elle est une légende", "Elle est un cycle"],
-                points: { A: "Empire", B: "Nains", C: "Hauts Elfes", D: "Chaos" }
-            },
-            {
-                question: "Quel rôle jouez-vous dans votre groupe ?",
-                choices: ["Le leader", "Le protecteur", "Le diplomate", "Le provocateur"],
-                points: { A: "Empire", B: "Nains", C: "Hauts Elfes", D: "Chaos" }
-            },
-            {
-                question: "Quel type de lieu préférez-vous ?",
-                choices: ["Une grande ville", "Une montagne", "Un port", "Une forteresse"],
-                points: { A: "Empire", B: "Nains", C: "Hauts Elfes", D: "Chaos" }
-            },
-            {
-                question: "Quelle est votre devise ?",
-                choices: ["Un pour tous", "La force dans l'unité", "La beauté dans l'art", "Tout doit être détruit"],
-                points: { A: "Empire", B: "Nains", C: "Hauts Elfes", D: "Chaos" }
-            },
-            {
-                question: "Quel est votre but dans la vie ?",
-                choices: ["Devenir un héros", "Construire un empire", "Créer une œuvre d'art", "Détruire l'ennemi"],
-                points: { A: "Empire", B: "Nains", C: "Hauts Elfes", D: "Chaos" }
-            },
-            {
-                question: "Quel est votre sentiment face à l'autorité ?",
-                choices: ["Je la respecte", "Je la défie", "Je la conteste", "Je l'ignore"],
-                points: { A: "Empire", B: "Nains", C: "Hauts Elfes", D: "Chaos" }
-            },
-            {
-                question: "Quel type de leader seriez-vous ?",
-                choices: ["Un stratège", "Un guerrier", "Un visionnaire", "Un tyran"],
-                points: { A: "Empire", B: "Nains", C: "Hauts Elfes", D: "Chaos" }
-            },
-            {
-                question: "Quel est votre rapport au changement ?",
-                choices: ["Il est nécessaire", "Il doit être contrôlé", "Il est inévitable", "Il est destructeur"],
-                points: { A: "Empire", B: "Nains", C: "Hauts Elfes", D: "Chaos" }
-            },
-            {
-                question: "Quelle est votre principale force ?",
-                choices: ["La capacité d'adaptation", "La puissance", "L'intelligence", "Le charisme"],
-                points: { A: "Empire", B: "Nains", C: "Hauts Elfes", D: "Chaos" }
-            },
-            {
-                question: "Comment gérez-vous le stress ?",
-                choices: ["Je fais une pause", "Je me bats", "Je crée", "Je provoque le chaos"],
-                points: { A: "Empire", B: "Nains", C: "Hauts Elfes", D: "Chaos" }
-            },
-            {
-                question: "Quel type de musique préférez-vous ?",
-                choices: ["Classique", "Énergique", "Traditionnelle", "Bruit"],
-                points: { A: "Empire", B: "Nains", C: "Hauts Elfes", D: "Chaos" }
-            },
-            {
-                question: "Quel est votre plus grand rêve ?",
-                choices: ["Gagner une bataille", "Devenir riche", "Créer une œuvre d'art", "Régner sur le chaos"],
-                points: { A: "Empire", B: "Nains", C: "Hauts Elfes", D: "Chaos" }
-            },
-            {
-                question: "Quel animal vous représente le mieux ?",
-                choices: ["Un aigle", "Un lion", "Un cerf", "Un serpent"],
-                points: { A: "Empire", B: "Nains", C: "Hauts Elfes", D: "Chaos" }
-            },
-            {
-                question: "Quel type de paysage préférez-vous ?",
-                choices: ["Une ville prospère", "Une montagne majestueuse", "Une forêt enchantée", "Un marécage sombre"],
+                question: "Quel type de relation avez-vous avec la nature ?",
+                choices: ["Je l'admire", "Je la respecte", "Je l'explore", "Je l'exploite"],
                 points: { A: "Empire", B: "Nains", C: "Hauts Elfes", D: "Chaos" }
             },
             {
@@ -300,8 +130,13 @@
                 points: { A: "Empire", B: "Nains", C: "Hauts Elfes", D: "Chaos" }
             },
             {
-                question: "Que représente la liberté pour vous ?",
-                choices: ["Une chance de se réaliser", "Une occasion de se battre", "Un droit sacré", "Un concept à détruire"],
+                question: "Quel est votre meilleur atout ?",
+                choices: ["Stratégie", "Force", "Intelligence", "Manipulation"],
+                points: { A: "Empire", B: "Nains", C: "Hauts Elfes", D: "Chaos" }
+            },
+            {
+                question: "Quel type de musique préférez-vous ?",
+                choices: ["Classique", "Énergique", "Traditionnelle", "Bruit"],
                 points: { A: "Empire", B: "Nains", C: "Hauts Elfes", D: "Chaos" }
             },
             {
@@ -310,23 +145,103 @@
                 points: { A: "Empire", B: "Nains", C: "Hauts Elfes", D: "Chaos" }
             },
             {
-                question: "Quel type de livre aimez-vous lire ?",
-                choices: ["Histoire", "Stratégie", "Fiction", "Mythologie"],
+                question: "Quel est votre rapport à l'autorité ?",
+                choices: ["Je l'accepte", "Je la remets en question", "Je l'ignore", "Je la défie"],
                 points: { A: "Empire", B: "Nains", C: "Hauts Elfes", D: "Chaos" }
             },
             {
-                question: "Quel est votre élément préféré ?",
-                choices: ["Terre", "Feu", "Eau", "Air"],
+                question: "Quel type de lieu préférez-vous ?",
+                choices: ["Une grande ville", "Une montagne", "Un port", "Une forteresse"],
                 points: { A: "Empire", B: "Nains", C: "Hauts Elfes", D: "Chaos" }
             },
             {
-                question: "Comment réagissez-vous à la critique ?",
-                choices: ["Je l'accepte", "Je la défie", "Je l'étudie", "Je l'ignore"],
+                question: "Quel est votre plus grand rêve ?",
+                choices: ["Gagner une bataille", "Devenir riche", "Créer une œuvre d'art", "Régner sur le chaos"],
                 points: { A: "Empire", B: "Nains", C: "Hauts Elfes", D: "Chaos" }
             },
             {
-                question: "Quelle est votre vision de la guerre ?",
-                choices: ["Une nécessité", "Un art", "Une tragédie", "Un moyen de contrôler le chaos"],
+                question: "Quel type de paysage préférez-vous ?",
+                choices: ["Une ville prospère", "Une montagne majestueuse", "Une forêt enchantée", "Un marécage sombre"],
+                points: { A: "Empire", B: "Nains", C: "Hauts Elfes", D: "Chaos" }
+            },
+            {
+                question: "Comment réagissez-vous face à l'injustice ?",
+                choices: ["Je lutte", "Je me tais", "Je débat", "Je l'accepte"],
+                points: { A: "Empire", B: "Nains", C: "Hauts Elfes", D: "Chaos" }
+            },
+            {
+                question: "Quel animal vous représente le mieux ?",
+                choices: ["Un aigle", "Un lion", "Un cerf", "Un serpent"],
+                points: { A: "Empire", B: "Nains", C: "Hauts Elfes", D: "Chaos" }
+            },
+            {
+                question: "Quelle est votre devise ?",
+                choices: ["Un pour tous", "La force dans l'unité", "La beauté dans l'art", "Tout doit être détruit"],
+                points: { A: "Empire", B: "Nains", C: "Hauts Elfes", D: "Chaos" }
+            },
+            {
+                question: "Comment gérez-vous le stress ?",
+                choices: ["Je fais une pause", "Je me bats", "Je crée", "Je provoque le chaos"],
+                points: { A: "Empire", B: "Nains", C: "Hauts Elfes", D: "Chaos" }
+            },
+            {
+                question: "Que représente la liberté pour vous ?",
+                choices: ["Une chance de se réaliser", "Une occasion de se battre", "Un droit sacré", "Un concept à détruire"],
+                points: { A: "Empire", B: "Nains", C: "Hauts Elfes", D: "Chaos" }
+            },
+            {
+                question: "Quelle est votre façon préférée de voyager ?",
+                choices: ["À pied", "À cheval", "En bateau", "En détruire tout sur mon passage"],
+                points: { A: "Empire", B: "Nains", C: "Hauts Elfes", D: "Chaos" }
+            },
+            {
+                question: "Comment aimez-vous passer vos vacances ?",
+                choices: ["À explorer", "À combattre", "À créer", "À semer le chaos"],
+                points: { A: "Empire", B: "Nains", C: "Hauts Elfes", D: "Chaos" }
+            },
+            {
+                question: "Quel est votre livre préféré ?",
+                choices: ["Un traité de stratégie", "Une épopée héroïque", "Un poème", "Un grimoire"],
+                points: { A: "Empire", B: "Nains", C: "Hauts Elfes", D: "Chaos" }
+            },
+            {
+                question: "Quel est votre style de communication ?",
+                choices: ["Direct", "Fier", "Éloquent", "Manipulateur"],
+                points: { A: "Empire", B: "Nains", C: "Hauts Elfes", D: "Chaos" }
+            },
+            {
+                question: "Quel est votre type de défi préféré ?",
+                choices: ["Un débat", "Un combat", "Une création", "Un coup de théâtre"],
+                points: { A: "Empire", B: "Nains", C: "Hauts Elfes", D: "Chaos" }
+            },
+            {
+                question: "Quelle est votre idée de l'échec ?",
+                choices: ["Un pas vers le succès", "Une honte", "Une leçon", "Une opportunité de chaos"],
+                points: { A: "Empire", B: "Nains", C: "Hauts Elfes", D: "Chaos" }
+            },
+            {
+                question: "Quelle est votre attitude envers le changement ?",
+                choices: ["Je l'accepte", "Je le crains", "Je l'adopte", "Je l'impose"],
+                points: { A: "Empire", B: "Nains", C: "Hauts Elfes", D: "Chaos" }
+            },
+            {
+                question: "Quel est votre rapport à la tradition ?",
+                choices: ["Je la respecte", "Je la réinvente", "Je l'ignore", "Je la renverse"],
+                points: { A: "Empire", B: "Nains", C: "Hauts Elfes", D: "Chaos" }
+            },
+            {
+                question: "Comment préférez-vous passer votre temps libre ?",
+                choices: ["En réfléchissant", "En combattant", "En créant", "En semant le trouble"],
+                points: { A: "Empire", B: "Nains", C: "Hauts Elfes", D: "Chaos" }
+            },
+            {
+                question: "Quel type de film aimez-vous ?",
+                choices: ["Documentaire", "Action", "Romance", "Horreur"],
+                points: { A: "Empire", B: "Nains", C: "Hauts Elfes", D: "Chaos" }
+            },
+            {
+                question: "Quel est votre meilleur souvenir d'enfance ?",
+                choices: ["Une aventure", "Un combat", "Une création", "Un chaos"],
                 points: { A: "Empire", B: "Nains", C: "Hauts Elfes", D: "Chaos" }
             }
         ];
@@ -339,65 +254,73 @@
         };
 
         let currentQuestionIndex = 0;
-
         const questionText = document.getElementById("question-text");
-        const choiceButtons = document.querySelectorAll(".choice");
+        const choices = document.querySelectorAll(".choice");
         const nextButton = document.getElementById("next-btn");
         const resultContainer = document.getElementById("result-container");
         const resultText = document.getElementById("result-text");
-        const confettiContainer = document.getElementById("confetti");
+        const thankYouMessage = document.getElementById("thank-you-message");
         const retryButton = document.getElementById("retry-btn");
+        const confettiContainer = document.getElementById("confetti");
 
         function showQuestion() {
-            const currentQuestion = questions[currentQuestionIndex];
-            questionText.textContent = currentQuestion.question;
-            choiceButtons.forEach((button, index) => {
-                button.textContent = currentQuestion.choices[index];
-                button.classList.remove("selected", "grayed");
-                button.onclick = () => selectChoice(button, currentQuestion.points);
+            const question = questions[currentQuestionIndex];
+            questionText.innerText = question.question;
+            choices.forEach((choice, index) => {
+                choice.innerText = question.choices[index];
+                choice.classList.remove("selected", "grayed");
+                choice.onclick = () => selectChoice(choice);
             });
             nextButton.classList.add("hidden");
         }
 
-        function selectChoice(button, pointsToAdd) {
-            // Toggle selection
-            if (button.classList.contains("selected")) {
-                button.classList.remove("selected");
-            } else {
-                choiceButtons.forEach(btn => {
-                    btn.classList.remove("selected");
-                    btn.classList.add("grayed"); // Griser les autres boutons
-                });
-                button.classList.add("selected");
-            }
+        function selectChoice(choice) {
+            choices.forEach((c) => {
+                c.classList.remove("selected", "grayed");
+            });
+            choice.classList.add("selected");
+            nextButton.classList.remove("hidden");
 
-            nextButton.classList.toggle("hidden", !document.querySelector('.choice.selected'));
+            // Griser les autres choix
+            choices.forEach(c => {
+                if (c !== choice) {
+                    c.classList.add("grayed");
+                }
+            });
         }
 
         function showResult() {
-            const maxPointsRace = Object.keys(points).reduce((a, b) => points[a] > points[b] ? a : b);
-            resultText.textContent = `Vous êtes le mieux adapté à la race : ${maxPointsRace}!`;
+            let maxPoints = Math.max(...Object.values(points));
+            let resultRace = Object.keys(points).find(race => points[race] === maxPoints);
+            resultText.innerText = `Vous correspondez à la race : ${resultRace}`;
+            thankYouMessage.innerText = "Merci d'avoir participé au quiz ! Votre opinion est précieuse pour nous.";
             resultContainer.style.display = "block";
-            confettiContainer.style.display = "block";
-            generateConfetti();
+            nextButton.classList.add("hidden");
+            confetti();
         }
 
-        function generateConfetti() {
-            const count = 200;
-            for (let i = 0; i < count; i++) {
+        function confetti() {
+            const numConfetti = 100;
+            for (let i = 0; i < numConfetti; i++) {
                 createConfetti();
             }
         }
 
         function createConfetti() {
             const confetti = document.createElement("div");
-            confetti.className = "confetti";
+            confetti.classList.add("confetti");
             confetti.style.backgroundColor = getRandomColor();
-            confetti.style.left = `${Math.random() * 100}vw`;
-            confetti.style.animationDuration = `${Math.random() * 2 + 2}s`;
-            confetti.style.transform = `rotate(${Math.random() * 360}deg)`;
-            document.getElementById("confetti").appendChild(confetti);
-            setTimeout(() => confetti.remove(), 4000);
+            confetti.style.left = Math.random() * 100 + "vw";
+            confetti.style.animationDuration = (Math.random() * 2 + 2) + "s";
+            confetti.style.opacity = Math.random();
+            confetti.style.transform = "translateY(0)";
+            confettiContainer.appendChild(confetti);
+            setTimeout(() => {
+                confetti.style.transform = `translateY(${Math.random() * 100 + 200}px)`;
+            }, 0);
+            setTimeout(() => {
+                confetti.remove();
+            }, 3000);
         }
 
         function getRandomColor() {
