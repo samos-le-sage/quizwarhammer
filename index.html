@@ -312,27 +312,48 @@
             }
         ];
 
-         let currentQuestionIndex = 0;
+        // Mélanger les questions
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        // Mélanger les choix
+        function shuffleChoices(choices) {
+            for (let i = choices.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [choices[i], choices[j]] = [choices[j], choices[i]];
+            }
+        }
+
+        let currentQuestionIndex = 0;
         const scores = { "Empire": 0, "Nains": 0, "Hauts Elfes": 0, "Chaos": 0, "Vampires": 0, "Skavens": 0, "Elfes Noirs": 0, "Orques": 0 };
 
         function showQuestion() {
             const question = questions[currentQuestionIndex];
             document.getElementById("question").innerText = question.question;
 
+            // Mélanger les choix avant de les afficher
+            const shuffledChoices = [...question.choices];
+            shuffleChoices(shuffledChoices);
+
             const choicesDivs = document.querySelectorAll(".choice");
             choicesDivs.forEach((div, index) => {
-                div.innerText = question.choices[index];
-                div.onclick = () => selectChoice(index);
-                div.classList.remove("selected"); // Reset selected state
+                div.innerText = shuffledChoices[index];
+                div.onclick = () => selectChoice(index, shuffledChoices);
+                div.classList.remove("selected");
             });
 
             document.getElementById("next-button").style.display = "none";
         }
 
-        function selectChoice(index) {
+        function selectChoice(index, shuffledChoices) {
             const question = questions[currentQuestionIndex];
-            const choice = question.choices[index];
-            const points = question.points[Object.keys(question.points)[index]];
+            const selectedChoice = shuffledChoices[index];
+            const pointsKey = Object.keys(question.points)[question.choices.indexOf(selectedChoice)];
+            const points = question.points[pointsKey];
             scores[points]++;
 
             const choicesDivs = document.querySelectorAll(".choice");
@@ -351,28 +372,30 @@
             }
         }
 
-         function showResult() {
+        function showResult() {
             document.getElementById("quiz-container").style.display = "none";
             document.getElementById("result-container").style.display = "block";
 
             const maxScore = Math.max(...Object.values(scores));
             const totalQuestions = questions.length;
             const resultRace = Object.keys(scores).find(race => scores[race] === maxScore);
-            const percentage = ((maxScore / totalQuestions) * 100).toFixed(2); // Calculer le pourcentage
+            const percentage = ((maxScore / totalQuestions) * 100).toFixed(2);
             document.getElementById("result").innerText = `Vous êtes ${resultRace} à ${percentage}% !`;
         }
 
         document.getElementById("next-button").onclick = nextQuestion;
 
-        document.getElementById("retry-button").onclick = function() {
+        document.getElementById("retry-button").onclick = () => {
             currentQuestionIndex = 0;
-            for (let race in scores) scores[race] = 0;
-            document.getElementById("quiz-container").style.display = "block";
+            Object.keys(scores).forEach(race => scores[race] = 0);
+            shuffleArray(questions);
             document.getElementById("result-container").style.display = "none";
+            document.getElementById("quiz-container").style.display = "block";
             showQuestion();
         };
 
-        // Afficher le conteneur de quiz et la première question
+        // Initialiser le quiz
+        shuffleArray(questions);
         document.getElementById("quiz-container").style.display = "block";
         showQuestion();
     </script>
